@@ -46,7 +46,7 @@ function setup() {
 		_title: "How many people have GP Cards",
 		_data: data,
 		_xValue: "Year",
-		_yValue: "Total"
+		_yValue: "Gp_Card"
 	});
 
 }

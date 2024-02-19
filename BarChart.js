@@ -455,9 +455,7 @@ class scatterPlotChart {
 
 		this.rounding = 1;
 
-		this.maxNumX = this.calMax(this.xValue);
-		this.maxNumY = this.calMax(this.yValue);
-		this.maxNum = this.maxNumX + this.maxNumY;
+		this.maxNum = this.calMax(this.yValue);
 		this.numTicks = 12;
 
 		this.margin = 10;
@@ -481,16 +479,14 @@ class scatterPlotChart {
 		let plotNum = this.data.getRowCount()
 		let remainWidth = this.chartWidth - (this.margin * 2) - ((plotNum - 1) * this.spacing);
 		let barWidth = remainWidth / plotNum;
-		// let barUnit = barWidth + this.spacing;
+		let barUnit = barWidth + this.spacing;
 
 		push()
 		translate(this.margin, 0)
 		for (let x = 0; x < plotNum; x++) {
-			
-			let plotY = int(this.data.rows[x].obj[this.yValue]);
-			let plotX = int(this.data.rows[x].obj[this.xValue]);
-			console.log(plotY);
-			ellipse(this.scaler(plotX), this.scaler(plotY), 10, 10);
+			let value = int(this.data.rows[x].obj[this.yValue]);
+			console.log(value);
+			ellipse(x * barUnit, -this.scaler(value), 10, 10);
 			// (x * barUnit, 0, barWidth, this.scaler(value));
 		}
 		pop()
@@ -542,7 +538,7 @@ class scatterPlotChart {
 			stroke(50);
 			line(0, -ySpace * y, -10, -ySpace * y);
 
-			let unitSpace = (this.maxNumY / this.numTicks).toFixed();
+			let unitSpace = (this.maxNum / this.numTicks).toFixed();
 			noStroke();
 			fill(50);
 			textSize(15);
@@ -557,17 +553,11 @@ class scatterPlotChart {
 		let max = 0;
 		for (let x = 0; x < this.data.getRowCount(); x++) {
 
-			if (int(this.data.rows[x].obj[this.xValue]) > max) {
-				max = int(this.data.rows[x].obj[this.xValue]);
+			if (int(this.data.rows[x].obj[this.yValue]) > max) {
+				max = int(this.data.rows[x].obj[this.yValue]);
 			}
 		}
 
-		for (let y = 0; y < this.data.getRowCount(); y++) {
-
-			if (int(this.data.rows[y].obj[this.yValue]) > max) {
-				max = int(this.data.rows[y].obj[this.yValue]);
-			}
-		}
 
 		for (let x = max; x < 1000000; x++) {
 			if (x % this.numTicks == 0 && x % this.rounding == 0) {
