@@ -22,6 +22,7 @@ function setup() {
 		_yValue: "Gp_Card"
 	});
 
+
 	chart2 = new horizontalBarChart({
 		_posY: 500,
 		_title: "How many people have a Medical Cards",
@@ -40,6 +41,14 @@ function setup() {
 		_zValue: "Medical_Card"
 	});
 
+	chart4 = new scatterPlotChart({
+		_posX: 500,
+		_title: "How many people have GP Cards",
+		_data: data,
+		_xValue: "Year",
+		_yValue: "Total"
+	});
+
 }
 
 function draw() {
@@ -47,5 +56,6 @@ function draw() {
 	chart.render();
 	chart2.render();
 	chart3.render();
+	chart4.render();
 
 }

@@ -327,7 +327,6 @@ class stackedBarChart {
 	}
 
 	// Drawing bars
-	// Drawing stacked bars
 drawBars() {
     let barNum = this.data.getRowCount();
     let remainWidth = this.chartWidth - (this.margin * 2) - ((barNum - 1) * this.spacing);
@@ -434,4 +433,160 @@ drawBars() {
 	
 }
 
+class scatterPlotChart {
+	constructor({
+		_chartWidth = 300,
+		_chartHeight = 300,
+		_posX = 100,
+		_posY = 400,
+		_title = "Chart",
+		_data,
+		_xValue,
+		_yValue }) {
 
+		this.chartWidth = _chartWidth;
+		this.chartHeight = _chartHeight;
+		this.posX = _posX;
+		this.posY = _posY;
+		this.data = _data;
+		this.xValue = _xValue;
+		this.yValue = _yValue;
+		this.title = _title;
+
+		this.rounding = 1;
+
+		this.maxNumX = this.calMax(this.xValue);
+		this.maxNumY = this.calMax(this.yValue);
+		this.maxNum = this.maxNumX + this.maxNumY;
+		this.numTicks = 12;
+
+		this.margin = 10;
+		this.spacing = 10;
+
+	}
+
+	render() {
+		noFill();
+		push();
+		translate(this.posX, this.posY);
+		this.drawHAxis();
+		this.drawVAxis();
+		this.drawPlots();
+		pop();
+
+	}
+
+	// Drawing plots
+	drawPlots() {
+		let plotNum = this.data.getRowCount()
+		let remainWidth = this.chartWidth - (this.margin * 2) - ((plotNum - 1) * this.spacing);
+		let barWidth = remainWidth / plotNum;
+		// let barUnit = barWidth + this.spacing;
+
+		push()
+		translate(this.margin, 0)
+		for (let x = 0; x < plotNum; x++) {
+			
+			let plotY = int(this.data.rows[x].obj[this.yValue]);
+			let plotX = int(this.data.rows[x].obj[this.xValue]);
+			console.log(plotY);
+			ellipse(this.scaler(plotX), this.scaler(plotY), 10, 10);
+			// (x * barUnit, 0, barWidth, this.scaler(value));
+		}
+		pop()
+	}
+
+	// x
+	drawHAxis() {
+		line(0, 0, this.chartWidth, 0);
+		let barNum = this.data.getRowCount()
+		let remainWidth = this.chartWidth - (this.margin * 2) - ((barNum - 1) * this.spacing);
+		let barWidth = remainWidth / barNum;
+		let barUnit = barWidth + this.spacing;
+		push()
+		translate(this.margin, 0)
+
+		// Draw title
+		let titleHeading = this.title;
+		textAlign(CENTER, CENTER);
+		textSize(20);
+		fill(0);
+		text(titleHeading, this.chartWidth / 2, -325);
+
+
+		// Creating label for x-axis
+		let labelArray = this.data.getColumn(this.xValue);
+		for (let x = 0; x < labelArray.length; x++) {
+			let value = labelArray[x];
+			push()
+			translate(x * barUnit + (barWidth / 2), 10);
+			rotate(45);
+			fill(0);
+			noStroke();
+			textSize(14);
+			textAlign(LEFT, TOP);
+			text(value, 0, 0);
+			pop()
+		}
+
+		pop()
+	}
+
+	// y
+	drawVAxis() {
+
+		line(0, 0, 0, -this.chartHeight);
+		for (let y = 1; y < this.numTicks + 1; y++) {
+			// ySpace = 30
+			let ySpace = this.chartHeight / this.numTicks;
+			stroke(50);
+			line(0, -ySpace * y, -10, -ySpace * y);
+
+			let unitSpace = (this.maxNumY / this.numTicks).toFixed();
+			noStroke();
+			fill(50);
+			textSize(15);
+			textAlign(RIGHT, CENTER);
+			text(y * unitSpace, -15, -ySpace * y);
+
+		}
+	}
+
+
+	calMax() {
+		let max = 0;
+		for (let x = 0; x < this.data.getRowCount(); x++) {
+
+			if (int(this.data.rows[x].obj[this.xValue]) > max) {
+				max = int(this.data.rows[x].obj[this.xValue]);
+			}
+		}
+
+		for (let y = 0; y < this.data.getRowCount(); y++) {
+
+			if (int(this.data.rows[y].obj[this.yValue]) > max) {
+				max = int(this.data.rows[y].obj[this.yValue]);
+			}
+		}
+
+		for (let x = max; x < 1000000; x++) {
+			if (x % this.numTicks == 0 && x % this.rounding == 0) {
+				max = x;
+				break
+			}
+		}
+
+		return max;
+	}
+
+	// scaler(_num){
+	// let scaleValue = this.maxNum/this.chartHeight;
+	// return _num/scaleValue;
+	// }
+
+	// Scaling the barchart
+	scaler(_num) {
+		return map(_num, 0, this.maxNum, 0, this.chartHeight)
+		
+	}
+}
